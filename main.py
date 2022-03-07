@@ -14,6 +14,7 @@ import logging
 import time
 
 from PyQt5.QtWidgets import QApplication
+
 from package import app
 
 def main():
