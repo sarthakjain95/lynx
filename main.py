@@ -33,12 +33,12 @@ if __name__ == "__main__":
     TIMESTAMP = str(int(time.time()))
     logfile = f"session-{TIMESTAMP}.log"
 
-    # logging.basicConfig(
-    #     format='''%(asctime)s [%(levelname)s] %(message)s''',
-    #     datefmt="%H:%M:%S",
-    #     filename=logfile,
-    #     encoding="utf-8",
-    #     level=logging.DEBUG
-    # )
+    logging.basicConfig(
+        format='''%(asctime)s [%(levelname)s] %(message)s''',
+        datefmt="%H:%M:%S",
+        filename=logfile,
+        encoding="utf-8",
+        level=logging.DEBUG
+    )
 
     main()
