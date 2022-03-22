@@ -82,16 +82,15 @@ class MainWindow(QMainWindow):
 
     def goto(self, name):
         ''' Switches screens '''
-        match name:
-            case "login":
-                w = self.login
-            case "dashboard":
-                w = self.dashboard
-            case "register":
-                w = self.register
-            case _:
-                print(f"'{name}' does not exist.")
-                return
+        if name == "login":
+            w = self.login
+        elif name == "dashboard":
+            w = self.dashboard
+        elif name == "register":
+            w = self.register
+        else:
+            print(f"'{name}' does not exist.")
+            return
         # Set widget and change title
         self.views.setCurrentWidget(w)
         self.setWindowTitle(w.windowTitle())
