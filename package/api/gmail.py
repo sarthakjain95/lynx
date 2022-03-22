@@ -7,6 +7,9 @@
 import logging
 import imaplib
 
+import email
+from pprint import pprint
+
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_SERVER_PORT = 465
 
@@ -39,8 +42,39 @@ class GmailSession():
             return True
         except Exception as err:
             self.logger.debug("Login attempt was unsuccessful. [%s]", err)
+            self.imap_session = None
             self.has_valid_creds = False
             return False
+
+    def fetch_unread(self):
+        ''' Fetches unread emails from the gmail server '''
+        if self.has_valid_creds:
+            try:
+                self.session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT)
+                _, capabilities = self.session.login(self.email, self.pwd)
+                self.logger.info(capabilities)
+                self.session.select('inbox')
+                retcode, messages = self.session.search(None, 'SEEN')
+                if retcode == 'OK':
+                    for num in messages[0].split():
+                        response_code, data = self.session.fetch(num, '(RFC822)')
+                        if response_code == 'OK':
+                            # 'data' has a list of tuples (standard_used, content)
+                            for response_part in data:
+                                if isinstance(response_part, tuple):
+                                    mail = email.message_from_bytes(response_part[1])
+                                    sub = mail["Subject"]
+                                    self.logger.debug(f"Fetched '{sub}' email.")
+                                    yield dict(mail.items())
+                # Close session and return results
+                self.session.close()
+            except Exception as err:
+                self.imap_session = None # Invalidate current session in case it is still running
+                self.logger.error(f"Unknown error occurred [{err}]")
+                return
+        else:
+            # Code should never reach this point under normal circumstances
+            return
 
     def reset(self):
         self.email = None

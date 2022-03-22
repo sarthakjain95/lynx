@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
         self.gmail_worker = GmailWidget()
         self.gmail_worker.moveToThread(self.gmail_thread)
         self.gmail_worker.auth_reply_signal.connect(self.login_handler)
+        self.gmail_worker.unread_email_signal.connect(self.add_unread_email)
         self.gmail_thread.start()
         # Setup stacked widget
         self.views = QtWidgets.QStackedWidget()
@@ -65,14 +66,18 @@ class MainWindow(QMainWindow):
         if has_valid_creds:
             self.goto("dashboard")
             # Start fetching emails
-            # Start NLP Module
+            QtCore.QMetaObject.invokeMethod(self.gmail_worker, 'fetch_unread', QtCore.Qt.QueuedConnection)
         else:
             # Update message on login view
             self.login.invalid_creds()
 
+    def add_unread_email(self, email):
+        ''' Passes emails to dashboard for display '''
+        self.dashboard.add_email(email)
+
     def check_login(self, creds):
         ''' Passes credentials to GmailWidget to check if these are valid '''
-        self.gmail_worker.check_credentials(*creds)
+        QtCore.QMetaObject.invokeMethod(self.gmail_worker, 'check_credentials', QtCore.Qt.QueuedConnection, QtCore.Q_ARG(tuple, creds))
 
     def switch_to_login(self):
         self.goto("login")

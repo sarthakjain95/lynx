@@ -38,8 +38,10 @@ class DashboardView(QtWidgets.QWidget):
         # Set layout        
         self.setLayout(self.layout)
 
-    def display_emails(self, emails):
-        pass
+    def add_email(self, email):
+        ''' Adds the given email's 'Subject' to the list '''
+        self.email_list.addItem(email["Subject"])
 
     def logout(self):
+        self.email_list.clear()
         self.logout_signal.emit()
