@@ -5,15 +5,11 @@
 '''
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
 class FingerprintLogin(QtWidgets.QWidget):
 
-    '''
-        - Dummy class to attach fingerprint login option
-        - This will be implemented in a later stage 
-    '''
+    ''' Login window section for fingerprint authentication '''
 
     def __init__(self):
         super().__init__()
@@ -35,6 +31,8 @@ class FingerprintLogin(QtWidgets.QWidget):
 
 
 class ManualLogin(QtWidgets.QWidget):
+
+    ''' Login window section for manual login '''
 
     def __init__(self):
         super().__init__()
@@ -118,6 +116,8 @@ class LoginView(QtWidgets.QWidget):
         self.manual_login.sign.setStyleSheet("color:red;")
 
     def reset(self):
+        self.manual_login.email_input.clear()
+        self.manual_login.password_input.clear()
         self.manual_login.sign.setFont(QtGui.QFont("Monsterrat", 14, 400))
         self.manual_login.sign.setText("Alternatively, use manual login")
         self.manual_login.sign.setStyleSheet("color:black;")

@@ -1,19 +1,15 @@
 '''
     dashboard.py
 
-    - Defines the email dashboard 'view' for this application
+    - Defines the email dashboard view for this application
 '''
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5 import QtCore, QtWidgets
 
 
 class DashboardView(QtWidgets.QWidget):
 
-    '''
-        - The main screen to do all Email related activities.
-        - Uses gmail submodule to access emails
-    '''
+    ''' The main screen to do all Email related activities '''
 
     logout_signal = QtCore.pyqtSignal()
 

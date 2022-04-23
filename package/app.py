@@ -1,8 +1,8 @@
 ''' 
     app.py 
 
-    - Defines the main controller class for the application.
-    - Controller switches between 'views'    
+    - Defines the main controller/window class for the application
+    - Controller switches between 'views'
 '''
 
 import logging
@@ -11,16 +11,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from package.views import DashboardView, LoginView, RegistrationView
-from package.widgets import GmailWidget
+from package.widgets import EmailWidget, FingerprintWidget
 
 
 # Controller
 class MainWindow(QMainWindow):
 
     '''
-        (MainWindow) Controller
-
-        - Has access to all views and all necessary submodules and coordinates the connection between them
+        - Has access to all views and all necessary submodules and coordinates the connection between them.
     '''
 
     def __init__(self):
@@ -32,16 +30,16 @@ class MainWindow(QMainWindow):
         self.setFixedHeight(600)
         self.setFixedWidth(800)
         # Setup backend services
-        self.gmail_thread = QtCore.QThread()
-        self.gmail_worker = GmailWidget()
-        self.gmail_worker.moveToThread(self.gmail_thread)
-        self.gmail_worker.auth_reply_signal.connect(self.login_handler)
-        self.gmail_worker.unread_email_signal.connect(self.add_unread_email)
-        self.gmail_thread.start()
+        self.email_thread = QtCore.QThread()
+        self.email_worker = EmailWidget()
+        self.email_worker.moveToThread(self.email_thread)
+        self.email_worker.auth_reply_signal.connect(self.login_handler)
+        self.email_worker.unread_email_signal.connect(self.add_unread_email)
+        self.email_thread.start()
         # Setup stacked widget
         self.views = QtWidgets.QStackedWidget()
         self.setCentralWidget(self.views)
-        # Add views
+        # Add views to stack
         self.login = LoginView()
         self.register = RegistrationView()
         self.dashboard = DashboardView()
@@ -57,7 +55,7 @@ class MainWindow(QMainWindow):
 
     def logout_handler(self):
         # Clear all credentials
-        self.gmail_worker.reset()
+        QtCore.QMetaObject.invokeMethod(self.email_worker, 'reset', QtCore.Qt.QueuedConnection)
         self.login.reset()
         self.switch_to_login()
 
@@ -66,7 +64,7 @@ class MainWindow(QMainWindow):
         if has_valid_creds:
             self.goto("dashboard")
             # Start fetching emails
-            QtCore.QMetaObject.invokeMethod(self.gmail_worker, 'fetch_unread', QtCore.Qt.QueuedConnection)
+            QtCore.QMetaObject.invokeMethod(self.email_worker, 'fetch_unread', QtCore.Qt.QueuedConnection)
         else:
             # Update message on login view
             self.login.invalid_creds()
@@ -76,8 +74,8 @@ class MainWindow(QMainWindow):
         self.dashboard.add_email(email)
 
     def check_login(self, creds):
-        ''' Passes credentials to GmailWidget to check if these are valid '''
-        QtCore.QMetaObject.invokeMethod(self.gmail_worker, 'check_credentials', QtCore.Qt.QueuedConnection, QtCore.Q_ARG(tuple, creds))
+        ''' Passes credentials to EmailWidget to check if these are valid '''
+        QtCore.QMetaObject.invokeMethod(self.email_worker, 'check_credentials', QtCore.Qt.QueuedConnection, QtCore.Q_ARG(tuple, creds))
 
     def switch_to_login(self):
         self.goto("login")

@@ -1,9 +1,9 @@
 '''
     views.py
     
-    - Defines different views for the main window
+    - Collects all views under a single name
 '''
 
-from package.dashboard import DashboardView
-from package.login import LoginView
-from package.registration import RegistrationView
+from .dashboard import DashboardView
+from .login import LoginView
+from .registration import RegistrationView

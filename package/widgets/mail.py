@@ -1,14 +1,14 @@
 '''
-    gmail.py
+    mail.py
 
-    - Provides easy API to access a gmail account
+    - Provides easy API to access an email account
 '''
 
 import logging
-import imaplib
 
 import email
-from pprint import pprint
+import imaplib
+
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_SERVER_PORT = 465
@@ -16,15 +16,13 @@ SMTP_SERVER_PORT = 465
 IMAP_SERVER = "imap.gmail.com"
 IMAP_SERVER_PORT = 993
 
-class GmailSession():
 
-    '''
-        ** Under Development **
-        Provides easy access to gmail services
-    '''
+class EmailSession():
+
+    ''' Provides easy access to email services '''
 
     def __init__(self):
-        '''Starts an IMAP session on gmail IMAP_SERVER'''
+        ''' Starts an IMAP session on given IMAP_SERVER '''
         self.logger = logging.getLogger(__name__)
         self.email = None
         self.pwd = None
@@ -47,7 +45,7 @@ class GmailSession():
             return False
 
     def fetch_unread(self):
-        ''' Fetches unread emails from the gmail server '''
+        ''' Fetches unread emails from the email server '''
         if self.has_valid_creds:
             try:
                 self.session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT)
