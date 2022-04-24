@@ -83,7 +83,7 @@ class R307():
 
     def scan(self):
         '''
-            - Read a fingerprint and tries to match it with an existing template in the database
+            - Reads a fingerprint and tries to match it with an existing template in the database
             - If a match is found, returns the hash of the characteristics of matching template
         '''
 

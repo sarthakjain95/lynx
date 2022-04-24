@@ -11,7 +11,7 @@ A voice based email system for the visually impaired.
 ### Setting up R307
 
 To use the R307 sensor with a PC, you will need a USB to UART serial converter.  
-Connect +5v, Ground, TXD and RDX from Fingerprint sensor to UART Bridge.  
+Connect +5v, Ground, TXD and RXD from Fingerprint sensor to UART Bridge.  
 
 Here's a R307 Pin diagram for your reference:  
 <img src="https://i0.wp.com/circuitstate.com/wp-content/uploads/2021/05/R307-Fingerprint-Scanner-Pinout-2.png?resize=768%2C578&ssl=1" width="420">  
