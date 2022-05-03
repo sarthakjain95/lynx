@@ -11,6 +11,11 @@ from .mail import EmailSession
 from .fps import FingerprintSensor
 
 
+# Since FingerprintSensor class is already a QObject, it can be used directly
+#   without any wrappers.
+FingerprintWidget = FingerprintSensor
+
+
 class EmailWidget(QtCore.QObject):
 
     auth_reply_signal = QtCore.pyqtSignal(bool)
@@ -34,10 +39,3 @@ class EmailWidget(QtCore.QObject):
     @QtCore.pyqtSlot()
     def reset(self):
         self.session.reset()
-
-
-class FingerprintWidget(QtCore.QObject):
-
-    def __init__(self):
-        super().__init__()
-        pass

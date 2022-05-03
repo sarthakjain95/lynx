@@ -33,8 +33,8 @@ def main():
 if __name__ == "__main__":
 
     TIMESTAMP = str(int(time.time()))
-    # logfile = f"session-{TIMESTAMP}.log"
-    logfile = f"session.log"
+    logfile = f"session-{TIMESTAMP}.log"
+    # logfile = f"session.log"
 
     logging.basicConfig(
         format='''%(asctime)s [%(levelname)s] %(message)s''',

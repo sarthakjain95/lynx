@@ -105,6 +105,8 @@ class LoginView(QtWidgets.QWidget):
         email = self.manual_login.email_input.text().strip()
         pwd = self.manual_login.password_input.text().strip()
         if len(email) > 0 and len(pwd) > 0:
+            self.manual_login.login_button.setEnabled(False)
+            self.register_button.setEnabled(False)
             self.login_signal.emit((email, pwd))
 
     def register(self):
@@ -114,6 +116,8 @@ class LoginView(QtWidgets.QWidget):
         self.manual_login.sign.setFont(QtGui.QFont("Monsterrat", 14, 300))
         self.manual_login.sign.setText("Invalid Credentials")
         self.manual_login.sign.setStyleSheet("color:red;")
+        self.manual_login.login_button.setEnabled(True)
+        self.register_button.setEnabled(True)
 
     def reset(self):
         self.manual_login.email_input.clear()
@@ -121,3 +125,5 @@ class LoginView(QtWidgets.QWidget):
         self.manual_login.sign.setFont(QtGui.QFont("Monsterrat", 14, 400))
         self.manual_login.sign.setText("Alternatively, use manual login")
         self.manual_login.sign.setStyleSheet("color:black;")
+        self.manual_login.login_button.setEnabled(True)
+        self.register_button.setEnabled(True)

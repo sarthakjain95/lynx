@@ -41,3 +41,7 @@ class DashboardView(QtWidgets.QWidget):
     def logout(self):
         self.email_list.clear()
         self.logout_signal.emit()
+
+    def reset(self):
+        ''' Clear the list of emails '''
+        self.email_list.clear()

@@ -16,6 +16,8 @@ SMTP_SERVER_PORT = 465
 IMAP_SERVER = "imap.gmail.com"
 IMAP_SERVER_PORT = 993
 
+CONN_TIMEOUT = 5
+
 
 class EmailSession():
 
@@ -30,7 +32,7 @@ class EmailSession():
 
     def check_credentials(self, email, pwd):
         try:
-            self.imap_session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT)
+            self.imap_session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT, timeout=CONN_TIMEOUT)
             self.email = email
             self.pwd = pwd
             self.imap_session.login(email, pwd)
@@ -48,7 +50,7 @@ class EmailSession():
         ''' Fetches unread emails from the email server '''
         if self.has_valid_creds:
             try:
-                self.session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT)
+                self.session = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_SERVER_PORT, timeout=CONN_TIMEOUT)
                 _, capabilities = self.session.login(self.email, self.pwd)
                 self.logger.info(capabilities)
                 self.session.select('inbox')
