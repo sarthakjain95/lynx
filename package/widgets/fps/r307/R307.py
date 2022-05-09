@@ -39,7 +39,7 @@ class R307(QtCore.QObject):
     # Signals
     scan_complete_signal = QtCore.pyqtSignal(tuple)
     enrollment_stage_one_complete_signal = QtCore.pyqtSignal()
-    enrollment_state_two_complete_signal = QtCore.pyqtSignal(tuple)
+    enrollment_stage_two_complete_signal = QtCore.pyqtSignal(tuple)
     error_encountered_signal = QtCore.pyqtSignal(str)
 
     BAUD_RATE = 115200 # Do not change
@@ -59,7 +59,7 @@ class R307(QtCore.QObject):
         else:
             raise Exception("Could not set port")
         # Log final selection
-        self.logger.info(f"Setting port to {self.port}")
+        self.logger.debug(f"Setting port to {self.port}")
 
     @QtCore.pyqtSlot()
     def reset_connection(self):
@@ -71,16 +71,16 @@ class R307(QtCore.QObject):
             # Reset port
             self.set_port()
             # Open a connection to r307
-            self.logger.info(f"Opening a serial connection to '{self.port}'")
+            self.logger.debug(f"Opening a serial connection to '{self.port}'")
             self.dev = PyFingerprint(self.port, self.BAUD_RATE)
             # Make sure connection was successful
             if self.dev.verifyPassword() == False:
                 raise Exception("Could not connect to the fingerprint sensor!")
-            self.logger.info("Successfully connected to the fingerprint sensor!")
+            self.logger.debug("Successfully connected to the fingerprint sensor!")
         except Exception as e:
             e_message = str(e)
             self.logger.error(f"Error Encountered: {e_message}")
-            self.error_encountered.emit(e_message)
+            self.error_encountered_signal.emit(e_message)
 
     @QtCore.pyqtSlot()
     def enroll_fingerprint(self):
@@ -119,8 +119,8 @@ class R307(QtCore.QObject):
 
             if self.dev.compareCharacteristics() == 0:
                 # Fingers do not match, we cannot add this template to database
-                self.enrollment_state_two_complete_signal.emit((False, None))
-                self.logger.info("Fingers do not match! Cannot enroll user.")
+                self.enrollment_stage_two_complete_signal.emit((False, None))
+                self.logger.debug("Fingers do not match! Cannot enroll user.")
                 return
 
             # Add this template to database
@@ -134,7 +134,7 @@ class R307(QtCore.QObject):
 
             # Send the hash back to controller
             self.logger.debug(f"Caputured hash {characteristics_hash[:8]}*")
-            self.enrollment_state_two_complete_signal.emit((True, characteristics_hash))
+            self.enrollment_stage_two_complete_signal.emit((True, characteristics_hash))
             return
         except Exception as e:
             e_message = str(e)
@@ -181,5 +181,5 @@ class R307(QtCore.QObject):
     # Used for tests only
     def clear_database(self):
         ''' Clears all saved fingerprint '''
-        self.logger.info("Clearing fingerprint database.")
+        self.logger.debug("Clearing fingerprint database.")
         self.dev.clearDatabase()

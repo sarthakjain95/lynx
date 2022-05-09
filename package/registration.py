@@ -10,21 +10,46 @@ class FingerprintEnrollmentSection(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        # Init Widgets
+        # Init Layout and Widgets
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.error_message = QtWidgets.QLabel()
         self.message = QtWidgets.QLabel()
         self.icon = QtWidgets.QLabel()
+        # Set Fingerprint Pixmap
         self.fingerprint = QtGui.QPixmap("./package/resources/icons/fingerprint_idle.png")
         self.fingerprint = self.fingerprint.scaledToHeight(128)
         self.icon.setPixmap(self.fingerprint)
+        # Configure Text and Font Style
+        self.error_message.setFont(QtGui.QFont("Monsterrat", 12, 200))
+        self.error_message.setStyleSheet("color:red;")
         self.message.setFont(QtGui.QFont("Monsterrat", 20, 400))
-        self.message.setText("Scan your finger")
+        self.reset() # Reset text
         # Configure layout
         self.layout.addWidget(self.icon, 0, QtCore.Qt.AlignCenter)
+        self.layout.addWidget(self.error_message, 0, QtCore.Qt.AlignCenter)
         self.layout.addWidget(self.message, 0, QtCore.Qt.AlignCenter)
         # Set layout
         self.layout.setContentsMargins(0, 20, 0, 0)
         self.setLayout(self.layout)
+
+    def rescan_message(self):
+        self.error_message.setText("")
+        self.message.setText("Please scan you finger one more time!")
+
+    def enrollment_complete(self):
+        self.icon.setVisible(False)
+        self.message.setText("Registration Complete!")
+
+    def repeat_enrollment(self):
+        ''' Display general message and error message '''
+        self.reset()
+        self.error_message.setText("Could not enroll your finger! Please try again!")
+
+    def reset(self):
+        ''' Reset all text on this screen to initial state '''
+        self.icon.setVisible(True)
+        self.error_message.setText("")
+        self.message.setText("Please scan your finger")
 
 
 class CredentialsInputSection(QtWidgets.QWidget):
@@ -53,6 +78,21 @@ class CredentialsInputSection(QtWidgets.QWidget):
         # Set Layout
         self.layout.setContentsMargins(50, 30, 50, 0)
         self.setLayout(self.layout)
+
+    def display_error(self):
+        # Display error message
+        self.sign.setFont(QtGui.QFont("Monsterrat", 14, 300))
+        self.sign.setText("Invalid Credentials, Try Again.")
+        self.sign.setStyleSheet("color:red;")
+
+    def reset(self):
+        # Clear inputs
+        self.email_input.clear()
+        self.password_input.clear()
+        # Reset sign text and font
+        self.sign.setFont(QtGui.QFont("Monsterrat", 14, 400))
+        self.sign.setText("Enter your credentials")
+        self.sign.setStyleSheet("color:black;")
 
 
 class RegistrationView(QtWidgets.QWidget):
@@ -103,6 +143,38 @@ class RegistrationView(QtWidgets.QWidget):
         # Set layouts
         self.setLayout(self.layout)
 
+    def login(self): # Switch to login window
+        self.switch_to_login_signal.emit()
+
+    ''' Fingerprint Sensor '''
+
+    def enroll_user_fingerprint(self):
+        # Reset all widgets
+        self.reset()
+        # Switch to fingerprint scanning mode
+        self.view_stack.setCurrentWidget(self.fingerprint_enrollment_section)
+
+    def continue_enrollment(self):
+        # Update message on fingerprint scanning section
+        self.fingerprint_enrollment_section.rescan_message()
+
+    def enrollment_complete(self):
+        # User enrollment is complete, display success message
+        self.fingerprint_enrollment_section.enrollment_complete()
+
+    def repeat_enrollment(self):
+        # Display error message and ask user to re-enroll fingerprint
+        self.fingerprint_enrollment_section.repeat_enrollment()
+
+    ''' Login Screen '''
+
+    def invalid_creds(self):
+        # Display error message
+        self.credentials_input_section.display_error()
+        # Enable buttons
+        self.credentials_input_section.check_cred_button.setEnabled(True)
+        self.login_button.setEnabled(True)
+
     def check_credentials_action(self):
         email = self.credentials_input_section.email_input.text().strip()
         pwd = self.credentials_input_section.password_input.text().strip()
@@ -113,33 +185,13 @@ class RegistrationView(QtWidgets.QWidget):
             # Send credentials back to controller for validation
             self.check_credentials_signal.emit((email, pwd))
 
-    def login(self): # Switch to login window
-        self.switch_to_login_signal.emit()
-
-    def enroll_user_fingerprint(self):
-        self.reset()
-        # Switch to fingerprint scanning mode
-        self.view_stack.setCurrentWidget(self.fingerprint_enrollment_section)
-
-    def invalid_creds(self):
-        # Display error message
-        self.credentials_input_section.sign.setFont(QtGui.QFont("Monsterrat", 14, 300))
-        self.credentials_input_section.sign.setText("Invalid Credentials, Try Again.")
-        self.credentials_input_section.sign.setStyleSheet("color:red;")
-        # Enable buttons
-        self.credentials_input_section.check_cred_button.setEnabled(True)
-        self.login_button.setEnabled(True)
+    ''' Reset '''
 
     def reset(self):
         # Reset to credentials input section
         self.view_stack.setCurrentWidget(self.credentials_input_section)
-        # Clear inputs
-        self.credentials_input_section.email_input.clear()
-        self.credentials_input_section.password_input.clear()
-        # Reset sign text and font
-        self.credentials_input_section.sign.setFont(QtGui.QFont("Monsterrat", 14, 400))
-        self.credentials_input_section.sign.setText("Enter your credentials")
-        self.credentials_input_section.sign.setStyleSheet("color:black;")
+        # Reset CredentialsInputSection
+        self.credentials_input_section.reset()
         # Enable buttons
         self.credentials_input_section.check_cred_button.setEnabled(True)
         self.login_button.setEnabled(True)
