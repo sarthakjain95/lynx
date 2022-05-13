@@ -142,6 +142,8 @@ class RegistrationView(QtWidgets.QWidget):
         self.layout.addWidget(self.login_button, 0, QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter)
         # Set layouts
         self.setLayout(self.layout)
+        # Setup cache
+        self.credential_cache = None
 
     def login(self): # Switch to login window
         self.switch_to_login_signal.emit()
@@ -149,18 +151,20 @@ class RegistrationView(QtWidgets.QWidget):
     ''' Fingerprint Sensor '''
 
     def enroll_user_fingerprint(self):
-        # Reset all widgets
-        self.reset()
+        # Reset fingerprint enrollment section
+        self.fingerprint_enrollment_section.reset()
         # Switch to fingerprint scanning mode
         self.view_stack.setCurrentWidget(self.fingerprint_enrollment_section)
 
     def continue_enrollment(self):
         # Update message on fingerprint scanning section
         self.fingerprint_enrollment_section.rescan_message()
+        self.login_button.setEnabled(False)
 
     def enrollment_complete(self):
         # User enrollment is complete, display success message
         self.fingerprint_enrollment_section.enrollment_complete()
+        self.login_button.setEnabled(True)
 
     def repeat_enrollment(self):
         # Display error message and ask user to re-enroll fingerprint
@@ -174,6 +178,8 @@ class RegistrationView(QtWidgets.QWidget):
         # Enable buttons
         self.credentials_input_section.check_cred_button.setEnabled(True)
         self.login_button.setEnabled(True)
+        # Clear cache
+        self.credential_cache = None
 
     def check_credentials_action(self):
         email = self.credentials_input_section.email_input.text().strip()
@@ -183,7 +189,8 @@ class RegistrationView(QtWidgets.QWidget):
             self.credentials_input_section.check_cred_button.setEnabled(False)
             self.login_button.setEnabled(False)
             # Send credentials back to controller for validation
-            self.check_credentials_signal.emit((email, pwd))
+            self.credential_cache = (email, pwd)
+            self.check_credentials_signal.emit(self.credential_cache)
 
     ''' Reset '''
 
@@ -195,3 +202,5 @@ class RegistrationView(QtWidgets.QWidget):
         # Enable buttons
         self.credentials_input_section.check_cred_button.setEnabled(True)
         self.login_button.setEnabled(True)
+        # Clear cache
+        self.credential_cache = None
