@@ -1,12 +1,11 @@
-# lynx
-
+# Lynx  
 [![Coming Soon](https://img.shields.io/static/v1?label=status&message=coming-soon&color=yellow)]()
 
-A voice based email system for the visually impaired.
+A prototype for voice based email system for the visually impaired.
 
 ## Usage
 
-> NOTE: This project is tested only on R307 Optical fingerprint sensor. Other models/variants may require additional changes in the code.
+> NOTE: This project is tested only on R307 Optical fingerprint sensor. Other fingerprint sensor models/variants may require additional changes in the code.
 
 ### Setting up R307
 
@@ -25,9 +24,12 @@ If you are using Windows (and R307 sensor), you have to install [this](https://w
 If you are using linux, you do not need any additional drivers. This sensor will show up as `/dev/ttyUSB0`. But you will have to run the application as root so that it can access this port.
 
 ### Running
+
+> **WARNING**: This software has a few security flaws that may compromise user credentials. Use with caution.  
+  
 Run `pip install -r requirements.txt` to install all the required packages.  
 Plug in your R307 fingerprint sensor.  
-Run `python main.py` to start the application.  
+Run `python main.py` to start the application.
 
 ## Links
 [USB to UART Converter](https://robu.in/product/cp-2102-6-pin/?gclid=EAIaIQobChMIm8qx_Iyr9wIVZpJmAh2zTQKmEAQYAyABEgKh3_D_BwE)  
